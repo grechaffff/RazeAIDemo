@@ -81,3 +81,26 @@ export function formatState(type: ActionType, state: ActionState): string {
 export function timeOf(iso: string): string {
   return new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 }
+
+type RecordedAction = {
+  actionType: ActionType;
+  campaign: { name: string };
+  before: ActionState;
+  after: ActionState;
+  verdict: Verdict;
+  applied: boolean;
+};
+
+/**
+ * The chat history sent back to the model is plain text, so without this the
+ * model cannot see the tool calls it made in earlier turns and may "correct"
+ * itself. Each assistant turn carries a short record of what the server did.
+ */
+export function actionRecord(actions: RecordedAction[]): string {
+  if (actions.length === 0) return "";
+  const lines = actions.map(
+    (a) =>
+      `${ACTION_LABEL[a.actionType]} · ${a.campaign.name}: ${formatState(a.actionType, a.before)} → ${formatState(a.actionType, a.after)}, ${VERDICT_LABEL[a.verdict].toLowerCase()}`,
+  );
+  return `\n\n[Server record of this turn — submitted through propose_action: ${lines.join("; ")}]`;
+}

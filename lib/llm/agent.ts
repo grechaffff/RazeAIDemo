@@ -21,6 +21,7 @@ Every change is checked against the workspace guardrails on the server. After ea
 - require_approval: nothing changed yet; it is waiting for approval in the decision log.
 - block: nothing changed; name the rule that stopped it, then suggest one alternative that respects the rule.
 Never try to get around a rule, for example by cutting a budget to near zero instead of pausing.
+Earlier assistant turns may end with a [Server record of this turn] line: that is what the server actually did, so trust it and never "correct" an earlier turn. Answer only the latest request.
 If a request is unclear, ask one short question. Reply in the user's language.`;
 
 function jsonSchema(schema: z.ZodType): Anthropic.Tool.InputSchema {

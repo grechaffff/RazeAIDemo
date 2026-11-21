@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { AgentAction } from "@/lib/llm/agent";
-import { ACTION_LABEL, VERDICT_LABEL, VERDICT_STYLE, formatState, money, type CampaignView } from "@/lib/ui";
+import { ACTION_LABEL, VERDICT_LABEL, VERDICT_STYLE, actionRecord, formatState, money, type CampaignView } from "@/lib/ui";
 
 type Message =
   | { role: "user"; content: string }
@@ -48,7 +48,10 @@ export function ChatPanel({
 
     const history = next
       .filter((m): m is Exclude<Message, { role: "notice" }> => m.role !== "notice")
-      .map((m) => ({ role: m.role, content: m.content || "(no text)" }))
+      .map((m) => ({
+        role: m.role,
+        content: ((m.content || "(no text)") + (m.role === "assistant" ? actionRecord(m.actions) : "")).slice(0, 2000),
+      }))
       .slice(-20);
     try {
       const res = await fetch("/api/agent", {
