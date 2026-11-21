@@ -30,7 +30,7 @@ export function RulesPanel({
   }, [rules.length]);
 
   return (
-    <aside className="flex min-h-0 flex-col bg-panel text-white">
+    <aside className="flex min-h-0 flex-1 flex-col bg-panel text-white">
       <div className="px-5 pt-5 pb-3">
         <h2 className="text-lg font-semibold">Rules</h2>
         <p className="mt-0.5 text-sm text-white/55">Written in plain English, enforced by code.</p>

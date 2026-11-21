@@ -22,7 +22,7 @@ export function DecisionLog({
   onChange: () => Promise<void>;
 }) {
   return (
-    <aside className="flex min-h-0 flex-col">
+    <aside className="flex min-h-0 flex-1 flex-col">
       <div className="px-5 pt-5 pb-3">
         <h2 className="text-lg font-semibold">Decision log</h2>
         <p className="mt-0.5 text-sm text-muted">Every check, newest first. Updates by itself.</p>
