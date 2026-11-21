@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // The floating dev badge covers the rule form in screen recordings.
+  devIndicators: false,
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

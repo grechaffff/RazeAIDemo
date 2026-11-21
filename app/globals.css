@@ -1,26 +1,33 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Ryze-like palette: warm beige page, near-black panel and buttons. */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-page: #f3eee5;
+  --color-card: #fffdf9;
+  --color-line: #e3dccf;
+  --color-ink: #1b1a17;
+  --color-muted: #6f6a60;
+  --color-panel: #1b1a17;
+  --color-panel-2: #26241f;
+  --color-panel-line: #36332c;
+
+  --color-allow: #1f7a46;
+  --color-allow-bg: #e2f2e7;
+  --color-approval: #9a6512;
+  --color-approval-bg: #fbefd6;
+  --color-block: #b3261e;
+  --color-block-bg: #fbe3e0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-page);
+  color: var(--color-ink);
 }
