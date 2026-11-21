@@ -1,9 +1,9 @@
-import Anthropic from "@anthropic-ai/sdk";
+import type Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
 import { describeRule } from "../rules/describe";
 import { ACTION_TYPES, RuleDefinitionSchema, type RuleDefinition } from "../rules/schema";
-import { MODEL } from "./client";
+import { MODEL, describeApiError } from "./client";
 
 type CampaignRef = { id: string; name: string };
 
@@ -68,7 +68,8 @@ export async function parseRule(client: Anthropic, text: string, campaigns: read
       output = response.parsed_output ?? null;
       problem = output ? "" : "The output was empty.";
     } catch (err) {
-      if (isApiError(err)) return { kind: "error", error: `Claude API error: ${err.message}` };
+      const apiError = describeApiError(err);
+      if (apiError) return { kind: "error", error: apiError };
       problem = `The output was not valid JSON for the schema: ${(err as Error).message}`;
     }
 
@@ -120,9 +121,4 @@ function toResult(
   const parsed = RuleDefinitionSchema.safeParse(candidate);
   if (!parsed.success) return { ok: false, problem: `The rule is incomplete: ${z.prettifyError(parsed.error)}` };
   return { ok: true, value: { kind: "rule", rule: parsed.data, description: describeRule(parsed.data, campaigns) } };
-}
-
-/** Network, auth and rate-limit failures: retrying with a correction will not help. */
-function isApiError(err: unknown): err is Error {
-  return err instanceof Anthropic.APIError;
 }

@@ -54,7 +54,7 @@ export function ChatPanel({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ messages: history }),
       });
-      const body = await res.json();
+      const body = await res.json().catch(() => ({ error: `The server returned an empty answer (HTTP ${res.status}).` }));
       if (!res.ok) throw new Error(body.error ?? "The agent did not answer.");
       setMessages((m) => [...m, { role: "assistant", content: body.reply, actions: body.actions }]);
       await onAction();

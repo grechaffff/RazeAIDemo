@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getDb } from "@/lib/db/client";
 import { runAgent } from "@/lib/llm/agent";
-import { getAnthropic, LlmNotConfiguredError } from "@/lib/llm/client";
+import { describeApiError, getAnthropic, LlmNotConfiguredError } from "@/lib/llm/client";
 import { checkLlmLimit, clientIp } from "@/lib/rate-limit";
 import { getOrCreateWorkspaceId } from "@/lib/workspace";
 
@@ -26,6 +26,9 @@ export async function POST(request: Request) {
     return Response.json(await runAgent(getAnthropic(), db, workspaceId, parsed.data.messages));
   } catch (err) {
     if (err instanceof LlmNotConfiguredError) return Response.json({ error: err.message }, { status: 503 });
-    throw err;
+    const apiError = describeApiError(err);
+    if (apiError) return Response.json({ error: apiError }, { status: 502 });
+    console.error("agent route failed", err);
+    return Response.json({ error: "The agent failed unexpectedly. Try again." }, { status: 500 });
   }
 }
