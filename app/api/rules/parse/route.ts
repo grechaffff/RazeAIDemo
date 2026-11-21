@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db/client";
 import { campaigns } from "@/lib/db/schema";
 import { getAnthropic, LlmNotConfiguredError } from "@/lib/llm/client";
 import { parseRule } from "@/lib/llm/parse-rule";
+import { checkLlmLimit, clientIp } from "@/lib/rate-limit";
 import { getOrCreateWorkspaceId } from "@/lib/workspace";
 
 /** Plain-English rule → a preview to confirm. Nothing is saved here. */
@@ -13,6 +14,8 @@ export async function POST(request: Request) {
   if (!parsed.success) return Response.json({ error: "Write the rule in 3 to 300 characters." }, { status: 400 });
 
   const db = getDb();
+  const limited = await checkLlmLimit(db, clientIp(request), "rules/parse");
+  if (limited) return Response.json({ kind: "error", error: limited }, { status: 429 });
   const workspaceId = await getOrCreateWorkspaceId(db);
   const list = await db
     .select({ id: campaigns.id, name: campaigns.name })

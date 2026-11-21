@@ -87,3 +87,15 @@ export const decisions = pgTable("decisions", {
   resolvedBy: text("resolved_by"),
   resolvedAt: timestamp("resolved_at", { withTimezone: true }),
 });
+
+/** One row per LLM-backed request, for per-IP and daily limits on the API key. */
+export const llmCalls = pgTable(
+  "llm_calls",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ip: text("ip").notNull(),
+    route: text("route").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("llm_calls_ip_idx").on(t.ip, t.createdAt), index("llm_calls_created_idx").on(t.createdAt)],
+);
